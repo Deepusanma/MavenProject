@@ -145,6 +145,18 @@ jobs:
      #   cp cicd/clouddeployment/scripts/templates/* cf-deploy/templates/
       # mkdir properties/
        # cp src/main/resources/*.yml properties/
+
+
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v3
+      with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+
+    - name: Upload JAR to S3
+      run: |
+          aws s3 cp target/my-app.jar s3://${{ secrets.S3_BUCKET_NAME }}/${{ env.vmbucket }}/${{ env.product }}/${{ env.application }}/${{ env.version }}/${{ github.ref_name }}/${{ github.run_id }}/
 #     # This item has no matching transformer
 #     - any-task/plugin-key/net.utoolity.atlassian.bamboo.tasks-for-aws:aws.s3.object:
 #         any-task:
@@ -180,7 +192,8 @@ jobs:
 #       shell: bash
   Build-AMI-Payment-AMI:
     runs-on:
-      - ubuntu-latest
+      - self-hosted
+      - Linux
     needs:
     - Build-Payment-Build
     steps:

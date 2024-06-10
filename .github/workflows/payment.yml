@@ -180,8 +180,7 @@ jobs:
 #       shell: bash
   Build-AMI-Payment-AMI:
     runs-on:
-      - self-hosted
-      - Linux
+      - ubuntu-latest
     needs:
     - Build-Payment-Build
     steps:

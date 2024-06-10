@@ -23,6 +23,31 @@ jobs:
     steps:
     - run: rm -rf ${{ github.workspace }}/*
     - uses: actions/checkout@v4.1.0
+
+    - name: Set up JDK 11
+      uses: actions/setup-java@v3
+      with:
+        java-version: '11'
+
+    - name: Extract Maven Version
+      id: extract_version
+      run: |
+          version=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
+          echo "Extracted Maven version: $version"
+          echo "::set-output name=version::$version"
+
+    - name: Remove Snapshot from Version
+      id: remove_snapshot
+      run: |
+          version=${{ steps.extract_version.outputs.version }}
+          clean_version=${version/-SNAPSHOT/}
+          echo "Clean version: $clean_version"
+          echo "::set-output name=clean_version::$clean_version"
+
+    - name: Use extracted version
+      run: |
+          clean_version=${{ steps.remove_snapshot.outputs.clean_version }}
+          echo "Using extracted version: $clean_version"
 #     # This item has no matching transformer
 #     - any-task/plugin-key/com.atlassian.bamboo.plugins.variable.updater.variable-updater-generic:variable-extractor:
 #         any-task:

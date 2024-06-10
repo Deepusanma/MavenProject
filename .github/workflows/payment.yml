@@ -139,12 +139,12 @@ jobs:
         mkdir cf-deploy/
         mkdir cf-deploy/scripts/
         mkdir cf-deploy/templates/
-        cp cicd/clouddeployment/vendormate-*json cf-deploy/
-        cp cicd/clouddeployment/vendormate-*yaml cf-deploy/
-        cp cicd/clouddeployment/scripts/* cf-deploy/scripts/
-        cp cicd/clouddeployment/scripts/templates/* cf-deploy/templates/
-        mkdir properties/
-        cp src/main/resources/*.yml properties/
+     #   cp cicd/clouddeployment/vendormate-*json cf-deploy/
+     #   cp cicd/clouddeployment/vendormate-*yaml cf-deploy/
+    #    cp cicd/clouddeployment/scripts/* cf-deploy/scripts/
+     #   cp cicd/clouddeployment/scripts/templates/* cf-deploy/templates/
+      # mkdir properties/
+       # cp src/main/resources/*.yml properties/
 #     # This item has no matching transformer
 #     - any-task/plugin-key/net.utoolity.atlassian.bamboo.tasks-for-aws:aws.s3.object:
 #         any-task:

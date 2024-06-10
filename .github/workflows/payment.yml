@@ -61,6 +61,9 @@ jobs:
     - name: Build with Maven
       run: |
           mvn clean install
+
+    - name: List contents of the directory
+      run: ls -R
 #     # This item has no matching transformer
 #     - any-task/plugin-key/org.jfrog.bamboo.bamboo-artifactory-plugin:maven3Task:
 #         any-task:

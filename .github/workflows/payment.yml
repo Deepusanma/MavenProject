@@ -79,8 +79,9 @@ jobs:
             -Dsonar.pullrequest.branch=${{ github.head_ref }}
             -Dsonar.pullrequest.base=${{ github.base_ref }}
             -Dsonar.login=${{ secrets.SONAR_TOKEN }}
-      #env:
-           # SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+      env:
+             SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+             SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 #     # This item has no matching transformer
 #     - any-task/plugin-key/ch.mibex.bamboo.sonar4bamboo:sonar4bamboo.maven3task:
 #         any-task:

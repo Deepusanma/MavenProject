@@ -17,18 +17,12 @@ env:
   subnetId: subnet-1d9ec235
   version: 1.2.0
   vmbucket: vendormate
-  vmdevtestAccountId: '038008872160'
-  vpcId: vpc-1a98457b
 jobs:
   Build-Payment-Build:
     runs-on: ubuntu-latest
     steps:
     - run: rm -rf ${{ github.workspace }}/*
     - uses: actions/checkout@v4.1.0
-      env:
-        REPO_NAME: "**org/name**"
-      with:
-        repository: "${{ env.REPO_NAME }}"
 #     # This item has no matching transformer
 #     - any-task/plugin-key/com.atlassian.bamboo.plugins.variable.updater.variable-updater-generic:variable-extractor:
 #         any-task:

@@ -165,7 +165,7 @@ jobs:
 
     - name: Upload JAR to S3
       run: |
-          aws s3 cp /home/runner/work/MavenProject/MavenProject/target/mb2g-spring-boot-0.0.1-SNAPSHOT.jar   s3://${{ secrets.S3_BUCKET_NAME }}/${{ env.vmbucket }}/${{ env.product }}/${{ env.application }}/${{ env.version }}/${{ github.ref_name }}/${{ github.run_id }}/
+          aws s3 cp $GITHUB_WORKSPACE/target/mb2g-spring-boot-0.0.1-SNAPSHOT.jar.original  s3://${{ secrets.S3_BUCKET_NAME }}/${{ env.vmbucket }}/${{ env.product }}/${{ env.application }}/${{ env.version }}/${{ github.ref_name }}/${{ github.run_id }}/
 #     # This item has no matching transformer
 #     - any-task/plugin-key/net.utoolity.atlassian.bamboo.tasks-for-aws:aws.s3.object:
 #         any-task:

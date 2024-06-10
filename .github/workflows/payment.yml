@@ -1,0 +1,182 @@
+name: vendormate/payment_api_-_develop
+on:
+  workflow_dispatch:
+env:
+  amiFileName: payment_east_ami
+  amiRegion: us-east-1
+  application: payment
+  awsRegion: us-east-1
+  baseami: ami-0f1149fe249e017a9
+  component: payment
+  deployName: payment
+  gbucket: ghx-deployment
+  modules: payment
+  owner: credentialing-apps@ghx.com
+  product: vision
+  service: vm-gss-elasticbamboo
+  subnetId: subnet-1d9ec235
+  version: 1.2.0
+  vmbucket: vendormate
+  vmdevtestAccountId: '038008872160'
+  vpcId: vpc-1a98457b
+jobs:
+  Build-Payment-Build:
+    runs-on: ubuntu-latest
+    steps:
+    - run: rm -rf ${{ github.workspace }}/*
+    - uses: actions/checkout@v4.1.0
+      env:
+        REPO_NAME: "**org/name**"
+      with:
+        repository: "${{ env.REPO_NAME }}"
+#     # This item has no matching transformer
+#     - any-task/plugin-key/com.atlassian.bamboo.plugins.variable.updater.variable-updater-generic:variable-extractor:
+#         any-task:
+#           plugin-key: com.atlassian.bamboo.plugins.variable.updater.variable-updater-generic:variable-extractor
+#           configuration:
+#             variable: version
+#             removeSnapshot: 'true'
+#             variableScope: RESULT
+#           description: Get version
+    - run: |-
+        echo "present working directory check"
+        pwd
+        ls -lrt
+        ls -lrt mavenconfig
+#     # This item has no matching transformer
+#     - any-task/plugin-key/org.jfrog.bamboo.bamboo-artifactory-plugin:maven3Task:
+#         any-task:
+#           plugin-key: org.jfrog.bamboo.bamboo-artifactory-plugin:maven3Task
+#           configuration: {}
+#           description: Build Payment API
+#     # This item has no matching transformer
+#     - any-task/plugin-key/ch.mibex.bamboo.sonar4bamboo:sonar4bamboo.maven3task:
+#         any-task:
+#           plugin-key: ch.mibex.bamboo.sonar4bamboo:sonar4bamboo.maven3task
+#           configuration:
+#             chosenSonarConfigId: '3'
+#             sonarServerSelection: fromServerConfig
+#             sonarMainBranch: master
+#             sonarProjectName: vm8-payment-api
+#             buildJdk: JDK-Corretto-11
+#             brokenQualityGateOption: show
+#             sonarPullRequestAnalysis: 'true'
+#             overrideSonarLoginVariable: Artifactory.Bamboo.UserPassword
+#             incrementalNoPullRequest: incrementalModeFailBuildField
+#             executable: Maven 3.5.0
+#             illegalBranchCharsReplacement: "-"
+#             sonarEditionSelection: COMMERCIAL_EDITION
+#             incrementalModeNotPossible: incrementalModeRunFullAnalysis
+#             environmentVariables: "-Dsonar.pullrequest.key=${{ github.event.pull_request.number }} -Dsonar.pullrequest.branch=${{ github.event.pull_request.head.ref }} -Dsonar.pullrequest.base=${{ github.event.pull_request.base.ref }}"
+#             additionalProperties: "-Dsonar.branch.name=${{ env.planRepository_branchName }} -s ${{ github.workspace }}/mavenconfig/maven-settings.xml -Dusername=bamboo -Dpassword=bamboo1"
+#             autoBranch: 'true'
+#             sonarProjectKey: vm8-payment-api
+#             overrideSonarBuildConfig: 'true'
+#           description: Sonar Scan
+    - run: |-
+        branchname=${{ env.planRepository_branchName }}
+        version=${{ env.version }}
+        mkdir payment
+        mv target/*.jar "payment/payment-${{ env.version }}-${{ github.run_id }}-$branchname".jar
+        tar -czvf "payment-${{ env.version }}-${{ github.run_id }}-$branchname".tar.gz payment
+#     # This item has no matching transformer
+#     - any-task/plugin-key/net.utoolity.atlassian.bamboo.tasks-for-aws:aws.s3.object:
+#         any-task:
+#           plugin-key: net.utoolity.atlassian.bamboo.tasks-for-aws:aws.s3.object
+#           configuration:
+#             presignMethod: GET
+#             pluginVersionOnSave: 2.22.0
+#             resourceAction: Upload
+#             pluginConfigVersionOnSave: '9'
+#             targetBucketName: ghx-deployment
+#             artifactToUpload: "-2:-1:-1:LOCAL_FILES"
+#             metadataConfigurationJson: |-
+#               {
+#                   "Cache-Control": "max-age=432000"
+#               }
+#             sourceLocalPath: "*.tar.gz"
+#             resourceRegion: us-east-1
+#             doNotFailIfNothingToDelete: 'true'
+#             accessKey: mpounraj
+#             awsCredentialsSource: IFAWS_CONNECTOR
+#             awsConnectorId: f19d13dc-0be2-472a-8f89-38a15c9aeb86
+#             targetObjectKey: "${{ env.vmbucket }}/${{ env.product }}/${{ env.application }}/${{ env.version }}/${{ env.planRepository_branchName }}/${{ github.run_id }}/"
+#           description: Push tar file to S3
+    - run: |-
+        mkdir cf-deploy/
+        mkdir cf-deploy/scripts/
+        mkdir cf-deploy/templates/
+        cp cicd/clouddeployment/vendormate-*json cf-deploy/
+        cp cicd/clouddeployment/vendormate-*yaml cf-deploy/
+        cp cicd/clouddeployment/scripts/* cf-deploy/scripts/
+        cp cicd/clouddeployment/scripts/templates/* cf-deploy/templates/
+        mkdir properties/
+        cp src/main/resources/*.yml properties/
+#     # This item has no matching transformer
+#     - any-task/plugin-key/net.utoolity.atlassian.bamboo.tasks-for-aws:aws.s3.object:
+#         any-task:
+#           plugin-key: net.utoolity.atlassian.bamboo.tasks-for-aws:aws.s3.object
+#           configuration:
+#             useAntDefaultExcludes: 'true'
+#             presignMethod: GET
+#             pluginVersionOnSave: 2.22.0
+#             variableNamespace: custom.aws
+#             resourceAction: Upload
+#             pluginConfigVersionOnSave: '11'
+#             targetBucketName: ghx-deployment
+#             artifactToUpload: "-2:-1:-1:LOCAL_FILES"
+#             secretKey: BAMSCRT@0@0@1n+OVa4s5y7QdfMDwQmrlg==
+#             sourceLocalPath: cf-deploy/vendormate*json,cf-deploy/vendormate*yaml,cf-deploy/scripts/*,cf-deploy/templates/*,properties/*.yml
+#             resourceRegion: us-east-1
+#             doNotFailIfNothingToDelete: 'true'
+#             accessKey: mpounraj
+#             awsCredentialsSource: IFAWS_CONNECTOR
+#             awsConnectorId: f19d13dc-0be2-472a-8f89-38a15c9aeb86
+#             targetObjectKey: "${{ env.vmbucket }}/${{ env.product }}/${{ env.application }}/${{ env.version }}/${{ env.planRepository_branchName }}/${{ github.run_id }}/"
+#             variableScope: LOCAL
+#           description: Push cf scripts and properties to S3
+#     # Only 'Local' scope is supported for inject-variables. The following snippet can be uncommented and used but will be scoped to the current job.
+#     - run: |-
+#         while IFS= read -r line || [[ -n "$line" ]]; do
+#           if [[ -n "$line" ]]; then
+#             key=$(echo "inject_$line" | cut -d= -f1)
+#             value=$(echo "$line" | cut -d= -f2)
+#             echo "$key=$value" >> "$GITHUB_ENV"
+#           fi
+#         done < src/main/resources/openapi.properties
+#       shell: bash
+  Build-AMI-Payment-AMI:
+    runs-on:
+      - self-hosted
+      - Linux
+    needs:
+    - Build-Payment-Build
+    steps:
+    - uses: actions/checkout@v4.1.0
+      env:
+        REPO_NAME: "**org/name**"
+      with:
+        repository: "${{ env.REPO_NAME }}"
+    - run: "/opt/packer build \\\n  --var \"bamboo_buildnumber=${{ github.run_id }}\" \\\n  --var \"bamboo_version=${{ env.version }}\" \\\n  --var \"component=${{ env.component }}\" \\\n  --var \"bamboo_branch=${{ env.planRepository_branchName }}\" \\\n  --var \"base_ami=${{ env.baseami }}\" \\\n  --var \"aws_region=${{ env.amiRegion }}\" \\\n  --var \"product=${{ env.product }}\" \\\n  --var \"gbucket=${{ env.gbucket }}\" \\\n  --var \"vmbucket=${{ env.vmbucket }}\" \\\n  --var \"modules=${{ env.modules }}\" \\\n  --var \"vpc_id=${{ env.vpcId }}\" \\\n  --var \"subnet_id=${{ env.subnetId }}\" \\\n  --var \"owner=${{ env.owner }}\" \\\n  --var \"service=${{ env.service }}\" \\\n  --var \"ami_file_name=${{ env.amiFileName }}\" \\\n  vendormate-standalone-ami.json 2>&1 | tee packeroutput\nbuildnumber=${{ github.run_id }}\ntimestamp=${{ env.buildTimeStamp }}\nbranch=${{ env.planRepository_branchName }}\nrepository=${{ env.repository_name }}\nchangeLog=\"na\"\nversion=\"${{ env.version }}\"\nproductComponent=\"${{ env.product }}-${{ env.component }}\"\nproduct=\"${{ env.product }}\"\ncomponent=\"${{ env.component }}\"\ngbucket=\"${{ env.gbucket }}\"\nvmbucket=\"${{ env.vmbucket }}\"\nmodules=\"${{ env.modules }}\"\nvpc_id=\"${{ env.vpcId }}\"\nsubnet_id=\"${{ env.subnetId }}\"\nowner=\"${{ env.owner }}\"\nservice=\"${{ env.service }}\"\nami_file_name=\"${{ env.amiFileName }}\"\nvmdevtestAccountId=\"${{ env.vmdevtestAccountId }}\"\n( grep ami- packeroutput | grep -v amazon-ebs ) | \\\nwhile read line ; do\n  region=`echo $line | awk -F':' '{ print $1 }'`\n  AMI=`echo $line | awk '{ print $2 }'`\n  echo $AMI > $ami_file_name.txt\n    \n  aws dynamodb put-item \\\n    --table-name AMIREGISTRY \\\n    --item \"{\n        \\\"amiId\\\": {\\\"S\\\": \\\"$AMI\\\"},\n        \\\"buildNumber\\\": {\\\"S\\\": \\\"$buildnumber\\\"},\n        \\\"creationDate\\\": {\\\"S\\\": \\\"$timestamp\\\"},\n        \\\"branch\\\": {\\\"S\\\": \\\"$branch\\\"},\n        \\\"repository\\\": {\\\"S\\\": \\\"$repository\\\"},\n        \\\"changeLog\\\": {\\\"S\\\": \\\"$changeLog\\\"},\n        \\\"region\\\": {\\\"S\\\": \\\"$region\\\"},\n        \\\"version\\\": {\\\"S\\\": \\\"$version\\\"},\n        \\\"ComponentRegion\\\": {\\\"S\\\": \\\"$product-$component-$region\\\"},\n        \\\"product\\\": {\\\"S\\\": \\\"$product\\\"},\n        \\\"gbucket\\\": {\\\"S\\\": \\\"$gbucket\\\"},\n        \\\"vmbucket\\\": {\\\"S\\\": \\\"$vmbucket\\\"},\n        \\\"modules\\\": {\\\"S\\\": \\\"$modules\\\"},\n        \\\"vpc_id\\\": {\\\"S\\\": \\\"$vpc_id\\\"},\n        \\\"subnet_id\\\": {\\\"S\\\": \\\"$subnet_id\\\"},\n        \\\"owner\\\": {\\\"S\\\": \\\"$owner\\\"},\n        \\\"service\\\": {\\\"S\\\": \\\"$service\\\"},\n        \\\"component\\\": {\\\"S\\\": \\\"$component\\\"}}\" \\\n    --return-consumed-capacity TOTAL\n    aws ec2 modify-image-attribute --region=$region --image-id $AMI --launch-permission \"{\\\"Add\\\":[{\\\"UserId\\\":\\\"$vmdevtestAccountId\\\"}]}\"\ndone"
+      working-directory: ami-automation
+      env:
+        AWS_DEFAULT_REGION: us-east-1
+    - run: |-
+        result=`grep "Some builds didn't complete successfully and had errors" packeroutput`
+        echo "${result}"
+        if [ -n "${result}" ]; then
+            echo "Packer Job did not complete successfully after two tries. Erroring out the Bamboo Build. Please investigate and correct any errors"
+            exit 1
+        else
+            echo "Packer finished successfully!"
+        fi
+      working-directory: ami-automation
+#     # This item has no matching transformer
+#     - any-task/plugin-key/com.atlassian.bamboo.plugins.variable.updater.variable-updater-generic:variable-file-reader:
+#         any-task:
+#           plugin-key: com.atlassian.bamboo.plugins.variable.updater.variable-updater-generic:variable-file-reader
+#           configuration:
+#             filename: ami-automation/${{ env.amiFileName }}.txt
+#             variable: "${{ env.amiFileName }}"
+#             variableScope: RESULT
+#           description: Set configuration East AMI ID

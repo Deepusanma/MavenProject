@@ -36,7 +36,7 @@ jobs:
         echo "present working directory check"
         pwd
         ls -lrt
-        ls -lrt mavenconfig
+       # ls -lrt mavenconfig
 #     # This item has no matching transformer
 #     - any-task/plugin-key/org.jfrog.bamboo.bamboo-artifactory-plugin:maven3Task:
 #         any-task:

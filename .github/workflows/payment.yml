@@ -87,7 +87,7 @@ jobs:
        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
        SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
       run: |
-        mvn clean verify org.sonarsource.scanner.maven:sonar-maven-plugin:3.9.0.1831:sonar \
+        mvn clean verify org.sonarsource.scanner.maven:sonar-maven-plugin:3.9.1.2184:sonar \
         -Dsonar.pullrequest.key=${{ github.event.pull_request.number }} \
         -Dsonar.pullrequest.branch=${{ github.event.pull_request.head.ref }} \
         -Dsonar.pullrequest.base=${{ github.event.pull_request.base.ref }} \

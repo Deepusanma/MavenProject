@@ -74,13 +74,12 @@ jobs:
           name: maven-artifacts
           path: target
 
-    
     - name: SonarQube Scan
       env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
       run: |
-          mvn sonar:sonar \
+          mvn org.sonarsource.scanner.maven:sonar-maven-plugin:3.9.1.2184:sonar \
             -Dsonar.projectKey=vm8-payment-api \
             -Dsonar.projectName=vm8-payment-api \
             -Dsonar.host.url=${{ secrets.SONAR_HOST_URL }} \
@@ -89,9 +88,10 @@ jobs:
             -Dsonar.pullrequest.branch=${{ github.event.pull_request.head.ref }} \
             -Dsonar.pullrequest.base=${{ github.event.pull_request.base.ref }} \
             -Dsonar.branch.name=${{ github.head_ref || github.ref_name }} \
-            -Dsonar.java.jdkHome=/opt/hostedtoolcache/Java_17_temurin_x64 \
+            -Dsonar.java.jdkHome=/opt/hostedtoolcache/Java_11_corretto_x64 \
             -Dsonar.exclusions=**/test/**
-
+  
+    
     
    
     - run: |-

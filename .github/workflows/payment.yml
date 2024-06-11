@@ -60,8 +60,8 @@ jobs:
       run: |
           jfrog config add artifactory --url=$ARTIFACTORY_URL --user=$ARTIFACTORY_USERNAME --password=$ARTIFACTORY_PASSWORD --interactive=false
 
-    - name: Upload Maven artifacts to Artifactory
-      run: jfrog rt u "target/*.jar" "my-repo/path"
+   # - name: Upload Maven artifacts to Artifactory
+   #   run: jfrog rt u "target/*.jar" "my-repo/path"
       env:
           ARTIFACTORY_URL: ${{ secrets.ARTIFACTORY_URL }}
           ARTIFACTORY_USERNAME: ${{ secrets.ARTIFACTORY_USERNAME }}
@@ -73,6 +73,22 @@ jobs:
       with:
           name: maven-artifacts
           path: target
+
+    
+    - name: SonarQube Scan
+      uses: SonarSource/sonarcloud-github-action@v1
+      with:
+          projectKey: vm8-payment-api
+          projectName: vm8-payment-api
+          args: >
+            -Dsonar.pullrequest.key=${{ github.event.pull_request.number }}
+            -Dsonar.pullrequest.branch=${{ github.event.pull_request.head.ref }}
+            -Dsonar.pullrequest.base=${{ github.event.pull_request.base.ref }}
+            -Dsonar.branch.name=${{ env.GITHUB_HEAD_REF }}
+            -Dsonar.java.jdkHome=/opt/hostedtoolcache/Java_11_corretto_x64
+            -Dsonar.login=${{ secrets.SONAR_TOKEN }}
+            -Dsonar.exclusions=**/test/**
+            -Dsonar.host.url=${{ secrets.SONAR_HOST_URL }}
 
     
    

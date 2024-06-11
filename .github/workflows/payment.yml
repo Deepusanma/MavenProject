@@ -85,20 +85,21 @@ jobs:
     - name: SonarQube Scan
       uses: SonarSource/sonarcloud-github-action@v1
       env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }
+       SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+       SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
       with:
-          projectKey: vm8-payment-api
-          projectName: vm8-payment-api
-          args: >
-            -Dsonar.pullrequest.key=${{ github.event.pull_request.number }}
-            -Dsonar.pullrequest.branch=${{ github.event.pull_request.head.ref }}
-            -Dsonar.pullrequest.base=${{ github.event.pull_request.base.ref }}
-            -Dsonar.branch.name=${{ env.GITHUB_HEAD_REF }}
-            -Dsonar.java.jdkHome=/opt/hostedtoolcache/Java_11_corretto_x64
-            -Dsonar.login=${{ secrets.SONAR_TOKEN }}
-            -Dsonar.exclusions=**/test/**
-            -Dsonar.host.url=${{ secrets.SONAR_HOST_URL }}
+       projectKey: vm8-payment-api
+       projectName: vm8-payment-api
+       args: >
+        -Dsonar.pullrequest.key=${{ github.event.pull_request.number }}
+        -Dsonar.pullrequest.branch=${{ github.event.pull_request.head.ref }}
+        -Dsonar.pullrequest.base=${{ github.event.pull_request.base.ref }}
+        -Dsonar.branch.name=${{ env.GITHUB_HEAD_REF }}
+        -Dsonar.java.jdkHome=/opt/hostedtoolcache/Java_11_corretto_x64
+        -Dsonar.login=${{ secrets.SONAR_TOKEN }}
+        -Dsonar.exclusions=**/test/**
+        -Dsonar.host.url=${{ secrets.SONAR_HOST_URL }}
+
   
     - run: |-
         branchname=${{ env.planRepository_branchName }}

@@ -89,7 +89,7 @@ jobs:
             -Dsonar.pullrequest.branch=${{ github.event.pull_request.head.ref }} \
             -Dsonar.pullrequest.base=${{ github.event.pull_request.base.ref }} \
             -Dsonar.branch.name=${{ github.head_ref || github.ref_name }} \
-            -Dsonar.java.jdkHome=/opt/hostedtoolcache/Java_11_corretto_x64 \
+            -Dsonar.java.jdkHome=/opt/hostedtoolcache/Java_17_temurin_x64 \
             -Dsonar.exclusions=**/test/**
 
     

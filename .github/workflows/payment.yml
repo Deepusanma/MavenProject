@@ -75,13 +75,21 @@ jobs:
           path: target
 
     - name: SonarQube Scan
-      uses: SonarSource/sonarcloud-github-action@v1
       env:
-       SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-       SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
-      with:
-        projectBaseDir: './'
-        args: '-Dsonar.sources=src -Dsonar.tests=test -Dsonar.java.binaries=target/classes'
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+      run: |
+          mvn org.sonarsource.scanner.maven:sonar-maven-plugin:3.9.1.2184:sonar \
+            -Dsonar.projectKey=vm8-payment-api \
+            -Dsonar.projectName=vm8-payment-api \
+            -Dsonar.host.url=${{ secrets.SONAR_HOST_URL }} \
+            -Dsonar.login=${{ secrets.SONAR_TOKEN }} \
+            -Dsonar.pullrequest.key=${{ github.event.pull_request.number }} \
+            -Dsonar.pullrequest.branch=${{ github.event.pull_request.head.ref }} \
+            -Dsonar.pullrequest.base=${{ github.event.pull_request.base.ref }} \
+            -Dsonar.branch.name=${{ github.head_ref || github.ref_name }} \
+            -Dsonar.java.jdkHome=/opt/hostedtoolcache/Java_11_corretto_x64 \
+            -Dsonar.exclusions=**/test/**
 
   
     - run: |-

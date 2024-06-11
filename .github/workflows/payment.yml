@@ -56,16 +56,16 @@ jobs:
     - name: Upload build artifacts to Artifactory
       uses: jfrog/setup-jfrog-cli@v1
 
-    - name: Configure JFrog CLI
-      run: |
-          jfrog config add artifactory --url=$ARTIFACTORY_URL --user=$ARTIFACTORY_USERNAME --password=$ARTIFACTORY_PASSWORD --interactive=false
+   # - name: Configure JFrog CLI
+    #  run: |
+     #     jfrog config add artifactory --url=$ARTIFACTORY_URL --user=$ARTIFACTORY_USERNAME --password=$ARTIFACTORY_PASSWORD --interactive=false
 
    # - name: Upload Maven artifacts to Artifactory
    #   run: jfrog rt u "target/*.jar" "my-repo/path"
-      env:
-          ARTIFACTORY_URL: ${{ secrets.ARTIFACTORY_URL }}
-          ARTIFACTORY_USERNAME: ${{ secrets.ARTIFACTORY_USERNAME }}
-          ARTIFACTORY_PASSWORD: ${{ secrets.ARTIFACTORY_PASSWORD }}
+   #   env:
+     #     ARTIFACTORY_URL: ${{ secrets.ARTIFACTORY_URL }}
+     #     ARTIFACTORY_USERNAME: ${{ secrets.ARTIFACTORY_USERNAME }}
+     #     ARTIFACTORY_PASSWORD: ${{ secrets.ARTIFACTORY_PASSWORD }}
 
 
     - name: Upload Maven artifacts

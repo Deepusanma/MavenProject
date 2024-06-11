@@ -55,8 +55,6 @@ jobs:
 
     - name: Upload build artifacts to Artifactory
       uses: jfrog/setup-jfrog-cli@v1
-      with:
-        version: latest
 
     - name: Configure JFrog CLI
       run: |

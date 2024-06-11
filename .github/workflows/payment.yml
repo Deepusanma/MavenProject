@@ -95,7 +95,8 @@ jobs:
         -Dsonar.java.jdkHome=/opt/hostedtoolcache/Java_11_corretto_x64 \
         -Dsonar.login=${{ secrets.SONAR_TOKEN }} \
         -Dsonar.exclusions=**/test/** \
-        -Dsonar.host.url=${{ secrets.SONAR_HOST_URL }}
+        -Dsonar.host.url=${{ secrets.SONAR_HOST_URL }} \
+        sonar:sonar
 
 
   

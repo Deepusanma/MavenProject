@@ -43,15 +43,7 @@ jobs:
       run: |
           clean_version=${{ steps.remove_snapshot.outputs.clean_version }}
           echo "Using extracted version: $clean_version"
-#     # This item has no matching transformer
-#     - any-task/plugin-key/com.atlassian.bamboo.plugins.variable.updater.variable-updater-generic:variable-extractor:
-#         any-task:
-#           plugin-key: com.atlassian.bamboo.plugins.variable.updater.variable-updater-generic:variable-extractor
-#           configuration:
-#             variable: version
-#             removeSnapshot: 'true'
-#             variableScope: RESULT
-#           description: Get version
+
     - run: |-
         echo "present working directory check"
         pwd
@@ -67,92 +59,20 @@ jobs:
           name: maven-artifacts
           path: target
 
-    - name: List contents of the directory
-      run: ls -R target
-#     # This item has no matching transformer
-#     - any-task/plugin-key/org.jfrog.bamboo.bamboo-artifactory-plugin:maven3Task:
-#         any-task:
-#           plugin-key: org.jfrog.bamboo.bamboo-artifactory-plugin:maven3Task
-#           configuration: {}
-#           description: Build Payment API
     
-  #  - name: SonarQube Scan
-  #    uses: sonarsource/sonarqube-scan-action@v1.0.0
-  #    with:
-  #        args: >
-   #         -Dsonar.projectKey=vm8-payment-api
-   #         -Dsonar.projectName=vm8-payment-api
-   #         -Dsonar.branch.name=${{ github.head_ref }}
-   #         -Dsonar.pullrequest.key=${{ github.event.pull_request.number }}
-   #         -Dsonar.pullrequest.branch=${{ github.head_ref }}
-   #         -Dsonar.pullrequest.base=${{ github.base_ref }}
-   #         -Dsonar.login=${{ secrets.SONAR_TOKEN }}
-   #   env:
-             #SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
-          #   SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-#     # This item has no matching transformer
-#     - any-task/plugin-key/ch.mibex.bamboo.sonar4bamboo:sonar4bamboo.maven3task:
-#         any-task:
-#           plugin-key: ch.mibex.bamboo.sonar4bamboo:sonar4bamboo.maven3task
-#           configuration:
-#             chosenSonarConfigId: '3'
-#             sonarServerSelection: fromServerConfig
-#             sonarMainBranch: master
-#             sonarProjectName: vm8-payment-api
-#             buildJdk: JDK-Corretto-11
-#             brokenQualityGateOption: show
-#             sonarPullRequestAnalysis: 'true'
-#             overrideSonarLoginVariable: Artifactory.Bamboo.UserPassword
-#             incrementalNoPullRequest: incrementalModeFailBuildField
-#             executable: Maven 3.5.0
-#             illegalBranchCharsReplacement: "-"
-#             sonarEditionSelection: COMMERCIAL_EDITION
-#             incrementalModeNotPossible: incrementalModeRunFullAnalysis
-#             environmentVariables: "-Dsonar.pullrequest.key=${{ github.event.pull_request.number }} -Dsonar.pullrequest.branch=${{ github.event.pull_request.head.ref }} -Dsonar.pullrequest.base=${{ github.event.pull_request.base.ref }}"
-#             additionalProperties: "-Dsonar.branch.name=${{ env.planRepository_branchName }} -s ${{ github.workspace }}/mavenconfig/maven-settings.xml -Dusername=bamboo -Dpassword=bamboo1"
-#             autoBranch: 'true'
-#             sonarProjectKey: vm8-payment-api
-#             overrideSonarBuildConfig: 'true'
-#           description: Sonar Scan
+   
     - run: |-
         branchname=${{ env.planRepository_branchName }}
         version=${{ env.version }}
         mkdir payment
         mv target/*.jar "payment/payment-${{ env.version }}-${{ github.run_id }}-$branchname".jar
         tar -czvf "payment-${{ env.version }}-${{ github.run_id }}-$branchname".tar.gz payment
-#     # This item has no matching transformer
-#     - any-task/plugin-key/net.utoolity.atlassian.bamboo.tasks-for-aws:aws.s3.object:
-#         any-task:
-#           plugin-key: net.utoolity.atlassian.bamboo.tasks-for-aws:aws.s3.object
-#           configuration:
-#             presignMethod: GET
-#             pluginVersionOnSave: 2.22.0
-#             resourceAction: Upload
-#             pluginConfigVersionOnSave: '9'
-#             targetBucketName: ghx-deployment
-#             artifactToUpload: "-2:-1:-1:LOCAL_FILES"
-#             metadataConfigurationJson: |-
-#               {
-#                   "Cache-Control": "max-age=432000"
-#               }
-#             sourceLocalPath: "*.tar.gz"
-#             resourceRegion: us-east-1
-#             doNotFailIfNothingToDelete: 'true'
-#             accessKey: mpounraj
-#             awsCredentialsSource: IFAWS_CONNECTOR
-#             awsConnectorId: f19d13dc-0be2-472a-8f89-38a15c9aeb86
-#             targetObjectKey: "${{ env.vmbucket }}/${{ env.product }}/${{ env.application }}/${{ env.version }}/${{ env.planRepository_branchName }}/${{ github.run_id }}/"
-#           description: Push tar file to S3
+
     - run: |-
         mkdir cf-deploy/
         mkdir cf-deploy/scripts/
         mkdir cf-deploy/templates/
-     #   cp cicd/clouddeployment/vendormate-*json cf-deploy/
-     #   cp cicd/clouddeployment/vendormate-*yaml cf-deploy/
-    #    cp cicd/clouddeployment/scripts/* cf-deploy/scripts/
-     #   cp cicd/clouddeployment/scripts/templates/* cf-deploy/templates/
-      # mkdir properties/
-       # cp src/main/resources/*.yml properties/
+    
 
 
     - name: Configure AWS credentials
@@ -166,39 +86,14 @@ jobs:
     - name: Upload JAR to S3
       run: |
           aws s3 cp $GITHUB_WORKSPACE/target/mb2g-spring-boot-0.0.1-SNAPSHOT.jar.original  s3://${{ secrets.S3_BUCKET_NAME }}/${{ env.vmbucket }}/${{ env.product }}/${{ env.application }}/${{ env.version }}/${{ github.ref_name }}/${{ github.run_id }}/
-#     # This item has no matching transformer
-#     - any-task/plugin-key/net.utoolity.atlassian.bamboo.tasks-for-aws:aws.s3.object:
-#         any-task:
-#           plugin-key: net.utoolity.atlassian.bamboo.tasks-for-aws:aws.s3.object
-#           configuration:
-#             useAntDefaultExcludes: 'true'
-#             presignMethod: GET
-#             pluginVersionOnSave: 2.22.0
-#             variableNamespace: custom.aws
-#             resourceAction: Upload
-#             pluginConfigVersionOnSave: '11'
-#             targetBucketName: ghx-deployment
-#             artifactToUpload: "-2:-1:-1:LOCAL_FILES"
-#             secretKey: BAMSCRT@0@0@1n+OVa4s5y7QdfMDwQmrlg==
-#             sourceLocalPath: cf-deploy/vendormate*json,cf-deploy/vendormate*yaml,cf-deploy/scripts/*,cf-deploy/templates/*,properties/*.yml
-#             resourceRegion: us-east-1
-#             doNotFailIfNothingToDelete: 'true'
-#             accessKey: mpounraj
-#             awsCredentialsSource: IFAWS_CONNECTOR
-#             awsConnectorId: f19d13dc-0be2-472a-8f89-38a15c9aeb86
-#             targetObjectKey: "${{ env.vmbucket }}/${{ env.product }}/${{ env.application }}/${{ env.version }}/${{ env.planRepository_branchName }}/${{ github.run_id }}/"
-#             variableScope: LOCAL
-#           description: Push cf scripts and properties to S3
-#     # Only 'Local' scope is supported for inject-variables. The following snippet can be uncommented and used but will be scoped to the current job.
-#     - run: |-
-#         while IFS= read -r line || [[ -n "$line" ]]; do
-#           if [[ -n "$line" ]]; then
-#             key=$(echo "inject_$line" | cut -d= -f1)
-#             value=$(echo "$line" | cut -d= -f2)
-#             echo "$key=$value" >> "$GITHUB_ENV"
-#           fi
-#         done < src/main/resources/openapi.properties
-#       shell: bash
+
+     
+    - run: |-
+        mkdir cf-deploy/
+        mkdir cf-deploy/scripts/
+        mkdir cf-deploy/templates/
+
+
   Build-AMI-Payment-AMI:
     runs-on:
       - self-hosted

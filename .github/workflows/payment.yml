@@ -67,11 +67,6 @@ jobs:
         mkdir payment
         mv target/*.jar "payment/payment-${{ env.version }}-${{ github.run_id }}-$branchname".jar
         tar -czvf "payment-${{ env.version }}-${{ github.run_id }}-$branchname".tar.gz payment
-
-    - run: |-
-        mkdir cf-deploy/
-        mkdir cf-deploy/scripts/
-        mkdir cf-deploy/templates/
     
 
 

@@ -47,9 +47,9 @@
 <artifactId>spring-boot-maven-plugin</artifactId>
 </plugin>
 <plugin>
-    <groupId>org.sonarsource.scanner.maven</groupId>
-    <artifactId>sonar-maven-plugin</artifactId>
-    <version>4.0.0.1742</version> <!-- Updated version -->
+      <groupId>org.sonarsource.scanner.maven</groupId>
+      <artifactId>sonar-maven-plugin</artifactId>
+      <version>${sonar-maven-plugin.version}</version>
 </plugin>
 </plugins>
 </build>

@@ -87,9 +87,6 @@ jobs:
       env:
        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
        SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
-      with:
-       projectKey: vm8-payment-api
-       projectName: vm8-payment-api
        args: >
         -Dsonar.pullrequest.key=${{ github.event.pull_request.number }}
         -Dsonar.pullrequest.branch=${{ github.event.pull_request.head.ref }}

@@ -24,14 +24,6 @@ jobs:
     - run: rm -rf ${{ github.workspace }}/*
     - uses: actions/checkout@v4.1.0
 
-    
-    - name: Set up JDK 11
-      uses: actions/setup-java@v2
-      with:
-          distribution: 'adopt'
-          java-version: '11'
-          cache: maven
-          
     - name: Extract Maven Version
       id: extract_version
       run: |
@@ -59,56 +51,18 @@ jobs:
        # ls -lrt mavenconfig
 
     - name: Build with Maven
-      run: mvn clean install
-
-    - name: Upload build artifacts to Artifactory
-      uses: jfrog/setup-jfrog-cli@v1
-
-   # - name: Configure JFrog CLI
-    #  run: |
-     #     jfrog config add artifactory --url=$ARTIFACTORY_URL --user=$ARTIFACTORY_USERNAME --password=$ARTIFACTORY_PASSWORD --interactive=false
-
-   # - name: Upload Maven artifacts to Artifactory
-   #   run: jfrog rt u "target/*.jar" "my-repo/path"
-   #   env:
-     #     ARTIFACTORY_URL: ${{ secrets.ARTIFACTORY_URL }}
-     #     ARTIFACTORY_USERNAME: ${{ secrets.ARTIFACTORY_USERNAME }}
-     #     ARTIFACTORY_PASSWORD: ${{ secrets.ARTIFACTORY_PASSWORD }}
-
+      run: mvn -B package --file pom.xml
 
     - name: Upload Maven artifacts
       uses: actions/upload-artifact@v2
       with:
           name: maven-artifacts
           path: target
-          
-    - name: SonarQube Scan
-      env:
-       SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-       SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
-      run: |
-        mvn clean verify org.sonarsource.scanner.maven:sonar-maven-plugin:3.9.1.2184:sonar \
-        -Dsonar.pullrequest.key=${{ github.event.pull_request.number }} \
-        -Dsonar.pullrequest.branch=${{ github.event.pull_request.head.ref }} \
-        -Dsonar.pullrequest.base=${{ github.event.pull_request.base.ref }} \
-        -Dsonar.branch.name=${{ env.GITHUB_HEAD_REF }} \
-        -Dsonar.java.jdkHome=/opt/hostedtoolcache/Java_11_corretto_x64 \
-        -Dsonar.login=${{ secrets.SONAR_TOKEN }} \
-        -Dsonar.exclusions=**/test/** \
-        -Dsonar.host.url=${{ secrets.SONAR_HOST_URL }}
-      shell: bash
-      working-directory: /home/runner/work/MavenProject/MavenProject
 
-
-
-  
-    - run: |-
-        branchname=${{ env.planRepository_branchName }}
-        version=${{ env.version }}
-        mkdir payment
-        mv target/*.jar "payment/payment-${{ env.version }}-${{ github.run_id }}-$branchname".jar
-        tar -czvf "payment-${{ env.version }}-${{ github.run_id }}-$branchname".tar.gz payment
-    
+    - name: Download Maven artifacts
+      uses: actions/download-artifact@v2
+      with:
+          name: maven-artifacts
 
 
     - name: Configure AWS credentials
@@ -117,11 +71,18 @@ jobs:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
+
+    - run: |-
+        branchname=${{ env.planRepository_branchName }}
+        version=${{ env.version }}
+        mkdir payment
+        mv target/*.jar "payment/payment-${{ env.version }}-${{ github.run_id }}-$branchname".jar
+        tar -czvf "payment-${{ env.version }}-${{ github.run_id }}-$branchname".tar.gz payment
    
 
     - name: Upload JAR to S3
       run: |
-          aws s3 cp $GITHUB_WORKSPACE/target/mb2g-spring-boot-0.0.1-SNAPSHOT.jar.original  s3://${{ secrets.S3_BUCKET_NAME }}/${{ env.vmbucket }}/${{ env.product }}/${{ env.application }}/${{ env.version }}/${{ github.ref_name }}/${{ github.run_id }}/
+          aws s3 cp $GITHUB_WORKSPACE/target/mb2g-spring-boot-0.0.1-SNAPSHOT.jar  s3://${{ secrets.S3_BUCKET_NAME }}/${{ env.vmbucket }}/${{ env.product }}/${{ env.application }}/${{ env.version }}/${{ github.ref_name }}/${{ github.run_id }}/
 
      
     - run: |-

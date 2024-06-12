@@ -66,6 +66,20 @@ jobs:
 
     - name: List contents of the directory
       run: ls -R
+      
+    - name: SonarQube Scan
+      uses: sonarsource/sonarqube-scan-action@v2.0.1
+      env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+      with:
+          args: >
+            -Dsonar.projectKey=${{ github.event.repository.name }}
+            -Dsonar.sources=.
+            -Dsonar.ci.autoconfig.disabled=true
+            -Dsonar.language=java
+            -Dsonar.java.binaries=${{ github.event.repository.name }}.${{ github.ref_name }}
+            -Dsonar.qualitygate.wait=true
 
 
     - name: Configure AWS credentials

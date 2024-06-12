@@ -64,6 +64,9 @@ jobs:
       with:
           name: maven-artifacts
 
+    - name: List contents of the directory
+      run: ls -R
+
 
     - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v3
